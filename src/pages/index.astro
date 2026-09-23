@@ -12,7 +12,7 @@ const sections = [
 	{ heading: 'Short posts', posts: posts.filter((p) => p.data.kind === 'short') },
 ].filter((s) => s.posts.length > 0);
 
-// public/cv.pdf is committed by the resume repo's GitHub Action (see docs/resume-repo-workflow.yml).
+// public/cv.pdf is committed by a GitHub Action in the private resume repo.
 const hasCv = existsSync(join(process.cwd(), 'public', 'cv.pdf'));
 
 const links = [

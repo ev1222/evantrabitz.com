@@ -12,14 +12,14 @@ const sections = [
 	{ heading: 'Short posts', posts: posts.filter((p) => p.data.kind === 'short') },
 ].filter((s) => s.posts.length > 0);
 
-// public/cv.pdf is committed by a GitHub Action in the private resume repo.
-const hasCv = existsSync(join(process.cwd(), 'public', 'cv.pdf'));
+// public/resume.pdf is committed by a GitHub Action in the private resume repo.
+const hasResume = existsSync(join(process.cwd(), 'public', 'resume.pdf'));
 
 const links = [
 	CONTACT.email && { label: 'Email', href: `mailto:${CONTACT.email}` },
 	CONTACT.github && { label: 'GitHub', href: CONTACT.github },
 	CONTACT.linkedin && { label: 'LinkedIn', href: CONTACT.linkedin },
-	hasCv && { label: 'CV', href: '/cv.pdf' },
+	hasResume && { label: 'Resume', href: '/resume.pdf' },
 	{ label: 'RSS', href: '/rss.xml' },
 ].filter((l): l is { label: string; href: string } => Boolean(l));
 ---

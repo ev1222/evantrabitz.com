@@ -9,7 +9,7 @@ npm run build    # static site → dist/
 ```
 
 - Posts: `src/content/writing/*.md(x)`
-- CV: `public/cv.pdf`, committed automatically from a private LaTeX repo
+- Resume: `public/resume.pdf`, committed automatically from a private LaTeX repo
 - Site settings (contact, Giscus, analytics): `src/consts.ts`
 
 See `AGENTS.md` for design decisions and the publishing workflow.

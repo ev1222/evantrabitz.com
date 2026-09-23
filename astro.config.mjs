@@ -24,9 +24,15 @@ export default defineConfig({
 		processor: unified({
 			remarkPlugins: [remarkMath],
 			rehypePlugins: [rehypeKatex],
+			// Footnote ids default to a "user-content-" prefix (GitHub's guard for untrusted
+			// Markdown). All content here is first-party, so keep anchors clean: #fn-1, #fnref-1.
+			remarkRehype: { clobberPrefix: '' },
 		}),
 		shikiConfig: {
 			themes: { light: 'github-light', dark: 'github-dark' },
+			// Emit only --shiki-light/--shiki-dark variables; global.css picks one per color-scheme,
+			// so code blocks follow the theme toggle as well as the OS setting.
+			defaultColor: false,
 			wrap: true,
 		},
 	},

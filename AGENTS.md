@@ -1,37 +1,63 @@
 # evantrabitz.com
 
-Personal website of Evan Trabitz: a short bio, an index of writing (Essays and Short posts), and a link to a CV PDF.
+Personal website of Evan Trabitz: a short bio, an index of writing (Essays and Notes), and a link to a resume PDF.
 `CLAUDE.md` is a symlink to this file.
 
-## Decisions (settled — don't relitigate without asking)
+## Decisions (made by Evan; don't change without asking)
+
+Only record something here if Evan actually decided it. Claude's own choices go under
+**Implementation notes** below, where they can be changed freely.
 
 **Stack and hosting**
-- Astro 7, started from the official blog template (`npm create astro@latest -- --template blog`), fully static output. No adapter.
-- Hosted on **Cloudflare Workers with static assets** (Pages is legacy; don't reintroduce it). There is no Worker script: `wrangler.jsonc` just serves `./dist`, with `404-page` not-found handling and the default `auto-trailing-slash`. Deployed by **Workers Builds** from GitHub on every push to `main`: build `npm run build`, deploy `npx wrangler deploy`, Node version from `.node-version` (22). The Worker is named `evantrabitz`, and `name` in `wrangler.jsonc` must match it.
-- Domain registered at Cloudflare Registrar; DNS lives in the same Cloudflare account. The apex custom domain is declared in `wrangler.jsonc` (`routes` → `custom_domain`), and `www` → apex is a zone Redirect Rule.
-- Redirects and headers, if ever needed, go in `public/_redirects` / `public/_headers` (natively supported by Workers static assets).
-- Repo and directory are both named after the domain: `evantrabitz.com`.
+- Astro, started from the official blog template (`npm create astro@latest -- --template blog`).
+- Hosted on **Cloudflare Workers** (static assets), deployed from GitHub on every push to `main`. Pages is legacy; don't use it.
+- Domain registered at Cloudflare Registrar, with DNS in the same Cloudflare account.
+- Repo and directory are both named after the domain: `evantrabitz.com`. The GitHub repo is public.
 
 **Design**
-- Minimal and text-first, modeled on darioamodei.com: **one serif typeface** (Source Serif 4, self-hosted via `@fontsource/source-serif-4` and the Astro Fonts API), a narrow reading column (`--measure: 36rem`), generous line height (1.7), almost no chrome. Light/dark follow the OS; no toggle.
-- The homepage is a short bio plus an index of writing split into **Essays** and **Short posts**.
-- **Strip template features rather than adding them.** No hero images, OG image generation, nav bars, social icons, JS widgets, or client-side frameworks unless explicitly asked for. All styling is in `src/styles/global.css`.
+- Minimal and text-first, modeled on darioamodei.com: one serif typeface, a narrow reading column, generous line height, almost no chrome.
+- **Strip template features rather than adding them.**
+- The homepage is a short bio plus an index of writing split into **Essays** and **Notes**.
+- Palette: **Eucalyptus & Plum** (chosen from a set of alternatives to the original green/white/pink). Values are under Implementation notes.
+- A **light/dark toggle in the top-right corner**.
+- Favicon reads "ET".
 
 **Content**
-- Posts are Markdown or MDX in the `writing` content collection: `src/content/writing/<slug>.md(x)` → `/writing/<slug>/`.
-- Frontmatter (schema in `src/content.config.ts`): `title`, `description`, `pubDate`, optional `updatedDate`, `kind` (`essay` | `short`, default `short`), `draft` (default `false`), optional `substackUrl`, `comments` (default `true`).
-- `draft: true` excludes a post from production builds — pages, homepage index, RSS, and sitemap. Drafts still render under `astro dev`. Always go through `getPosts()` in `src/lib/posts.ts`; never call `getCollection('writing')` directly, or drafts will leak.
-- `substackUrl` renders an "Also on Substack" link at the end of the post.
-- GFM footnotes are styled in `global.css` (`.footnotes`). Sidenotes are optional and not implemented.
-- Math: `remark-math` + `rehype-katex`, which run through the `unified()` Markdown processor (`@astrojs/markdown-remark`). Astro 7 defaults to Sätteri, which doesn't run remark/rehype plugins, so don't remove `markdown.processor` from `astro.config.mjs`. KaTeX CSS is imported only on post pages.
-- Syntax highlighting: Shiki, dual `github-light`/`github-dark` themes switched by `prefers-color-scheme`.
+- Posts are Markdown/MDX in content collections, with a `draft` frontmatter flag that excludes a post from builds.
+- GFM footnotes styled cleanly; sidenotes are optional.
+- Math via `remark-math` + `rehype-katex`; Shiki syntax highlighting.
+- An optional `substackUrl` frontmatter field that renders an "Also on Substack" link.
 
 **Features**
-- RSS at `/rss.xml` (`@astrojs/rss`); sitemap via `@astrojs/sitemap`; canonical URLs and OpenGraph tags in `src/components/BaseHead.astro`. `site` is `https://evantrabitz.com` with `trailingSlash: 'always'`.
-- **Resume**: the resume is maintained in LaTeX in a separate private repo. A GitHub Action there compiles it and commits the PDF here as `public/resume.pdf` (signed bot commits titled "Update resume (resume@<sha>)"), which triggers a normal Workers Builds deploy. The workflow and its setup live only in that private repo; don't copy them back here. This repo has no TeX toolchain and no HTML resume page. Never hand-edit `public/resume.pdf`; change the LaTeX instead. Don't add anything that reads from the private repo at build time; the one-way push keeps the Cloudflare build free of credentials. The homepage "Resume" link appears only once `public/resume.pdf` exists. `/cv.pdf` (the original address) 301s to `/resume.pdf` via `public/_redirects`.
-- Contact: GitHub `github.com/ev1222`, plus LinkedIn, email, and location. All are set in `CONTACT` in `src/consts.ts`; empty values aren't rendered.
-- **Comments**: Giscus (GitHub Discussions), `src/components/Giscus.astro`. It stays hidden until all of `GISCUS` in `src/consts.ts` is filled in. Per-post opt-out: `comments: false`.
-- **Analytics**: Cloudflare Web Analytics. Either enable automatic setup for the `evantrabitz.com` zone under Analytics → Web Analytics (auto-injected) or set `CF_ANALYTICS_TOKEN` in `src/consts.ts`; the beacon is only emitted in production builds. Don't do both.
+- RSS via `@astrojs/rss`; sitemap; canonical URLs and OpenGraph tags.
+- **Resume**: maintained in LaTeX in a separate **private** repo. A GitHub Action there (authenticating as a GitHub App, not a PAT) compiles it and commits the PDF here as `public/resume.pdf`. The workflow and its setup must **not** live in this public repo. The homepage link is labelled "Resume".
+- About/contact info: GitHub (`github.com/ev1222`), LinkedIn, email, location.
+- Comments via Giscus (GitHub Discussions).
+- Cloudflare Web Analytics.
+
+## Implementation notes (Claude's choices; change freely)
+
+**Build and hosting**
+- Fully static output; no Astro adapter. `wrangler.jsonc` serves `./dist` with no Worker script, `404-page` not-found handling and the default `auto-trailing-slash`. Workers Builds runs `npm run build`, then `npx wrangler deploy`; Node version comes from `.node-version` (22). The Worker is named `evantrabitz`, and `name` in `wrangler.jsonc` must match it.
+- The apex custom domain is declared in `wrangler.jsonc` (`routes` → `custom_domain`); `www` → apex is a zone Redirect Rule. Redirects and headers go in `public/_redirects` / `public/_headers`.
+
+**Design**
+- Typeface: Source Serif 4, self-hosted via `@fontsource/source-serif-4` and the Astro Fonts API. Column `--measure: 36rem`, line height 1.7. All styling is in `src/styles/global.css`.
+- Colors are tokens at the top of `global.css`, each written as `light-dark(light, dark)`. Light: eucalyptus `#EDF0EE` background, `#1A2320` text, `#53605A` secondary, plum `#7B2D5E` accent. Dark: `#121816` background, `#D5DCD8` text, `#8C9893` secondary, orchid `#CF8DB8` accent. The accent passes as text in both modes, so `--accent` and `--accent-text` currently match. Favicon: light "ET" (`#EDF0EE`) on the dark background (`#121816`) with a hairline `#8C9893` border, the same in both modes.
+- Theme toggle: `src/components/ThemeToggle.astro`. It follows the OS until clicked. A click sets `<html data-theme>` (which switches `color-scheme`) and stores the choice in `localStorage`, and an inline script in `Base.astro`'s `<head>` applies it before first paint. Shiki uses `defaultColor: false`, so code blocks follow the toggle; Giscus is kept in sync by `postMessage`. The favicon's own dark variant follows the OS, not the toggle.
+
+**Content**
+- Posts live in the `writing` collection: `src/content/writing/<slug>.md(x)` → `/writing/<slug>/`. Frontmatter (schema in `src/content.config.ts`): `title`, `description`, `pubDate`, optional `updatedDate`, `kind` (`essay` | `note`, default `note`), `draft` (default `false`), optional `substackUrl`, `comments` (default `true`).
+- `draft: true` excludes a post from production builds (pages, homepage index, RSS and sitemap), but drafts still render under `astro dev`. Always go through `getPosts()` in `src/lib/posts.ts`; never call `getCollection('writing')` directly, or drafts will leak.
+- Math plugins run through the `unified()` Markdown processor (`@astrojs/markdown-remark`). Astro 7 defaults to Sätteri, which doesn't run remark/rehype plugins, so don't remove `markdown.processor` from `astro.config.mjs`. KaTeX CSS is imported only on post pages. Sidenotes are not implemented.
+- Astro's content cache keys entries by file contents, so after a schema change that alters a default, touch the affected posts (or delete `.astro/data-store.json` with the dev server stopped).
+
+**Features**
+- `site` is `https://evantrabitz.com` with `trailingSlash: 'always'`; head tags are in `src/components/BaseHead.astro`.
+- Resume: bot commits are signed and titled "Update resume (resume@<sha>)". Never hand-edit `public/resume.pdf`; change the LaTeX instead. Nothing reads from the private repo at build time. The homepage link appears only once `public/resume.pdf` exists. `/cv.pdf` 301s to `/resume.pdf` via `public/_redirects`.
+- Contact values live in `CONTACT` in `src/consts.ts`; empty values aren't rendered. `hello@evantrabitz.com` needs Cloudflare Email Routing (Compute → Email Service) to receive mail.
+- Giscus (`src/components/Giscus.astro`) stays hidden until all of `GISCUS` in `src/consts.ts` is filled in. Per-post opt-out: `comments: false`.
+- Web Analytics uses automatic setup on the zone; leave `CF_ANALYTICS_TOKEN` empty unless switching to the manual snippet (never both).
 
 ## POSSE workflow (Publish on Own Site, Syndicate Elsewhere)
 

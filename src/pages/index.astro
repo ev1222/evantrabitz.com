@@ -9,7 +9,7 @@ import { getPosts, postUrl } from '../lib/posts';
 const posts = await getPosts();
 const sections = [
 	{ heading: 'Essays', posts: posts.filter((p) => p.data.kind === 'essay') },
-	{ heading: 'Short posts', posts: posts.filter((p) => p.data.kind === 'short') },
+	{ heading: 'Notes', posts: posts.filter((p) => p.data.kind === 'note') },
 ].filter((s) => s.posts.length > 0);
 
 // public/resume.pdf is committed by a GitHub Action in the private resume repo.
@@ -29,8 +29,9 @@ const links = [
 
 	<section class="bio">
 		<p>
-			I'm an AI Engineer at BWE building models and building with models with additional interests in physics, philosophy, economics, finance, and more. 
-			I write about all of them; Essays are longer pieces usually with some data involved, while Shorts are smaller notes concerning a specific thought. 
+			I'm an AI Engineer at BWE building models and running evals, with additional interests in physics, philosophy, economics, finance, and more.
+			<br><br>
+			I like to write and share some of what I write here: essays are longer pieces usually with some data involved, while notes are smaller notes concerning a specific thought. 
 		</p>
 		<p class="links">
 			{CONTACT.location && <span>{CONTACT.location}</span>}

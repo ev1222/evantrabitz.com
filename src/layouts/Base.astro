@@ -1,5 +1,6 @@
 ---
 import BaseHead, { type Props as HeadProps } from '../components/BaseHead.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
 import { AUTHOR, CF_ANALYTICS_TOKEN } from '../consts';
 
 type Props = HeadProps & {
@@ -13,10 +14,18 @@ const { bare = false, ...head } = Astro.props;
 <!doctype html>
 <html lang="en">
 	<head>
+		<!-- Apply a stored theme choice before first paint (no flash of the wrong theme). -->
+		<script is:inline>
+			try {
+				const t = localStorage.getItem('theme');
+				if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+			} catch {}
+		</script>
 		<BaseHead {...head} />
 		<slot name="head" />
 	</head>
 	<body>
+		<ThemeToggle />
 		{
 			!bare && (
 				<header class="site-header">

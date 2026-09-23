@@ -9,8 +9,8 @@ const writing = defineCollection({
 		description: z.string(),
 		pubDate: z.coerce.date(),
 		updatedDate: z.coerce.date().optional(),
-		// "essay" = long-form; "short" = everything else. Controls the homepage section.
-		kind: z.enum(['essay', 'short']).default('short'),
+		// "essay" = long-form; "note" = everything else. Picks the homepage section (Essays / Notes).
+		kind: z.enum(['essay', 'note']).default('note'),
 		// Drafts render in `astro dev` but are excluded from production builds, RSS and the sitemap.
 		draft: z.boolean().default(false),
 		// Set after cross-posting (POSSE) to render an "Also on Substack" link.

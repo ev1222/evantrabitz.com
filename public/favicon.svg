@@ -1,12 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-	<style>
-		rect { fill: #fdfcf9; }
-		text { fill: #1a1a1a; }
-		@media (prefers-color-scheme: dark) {
-			rect { fill: #161616; }
-			text { fill: #e8e6e1; }
-		}
-	</style>
-	<rect width="32" height="32" rx="4" />
-	<text x="16" y="24" text-anchor="middle" font-family="Georgia, serif" font-size="22">E</text>
+	<!-- Inset by half the stroke so the hairline border isn't clipped at the edges. -->
+	<rect x="0.5" y="0.5" width="31" height="31" rx="4.5" fill="#121816" stroke="#8c9893" stroke-width="1" />
+	<text x="16" y="22.5" text-anchor="middle" fill="#edf0ee" font-family="Georgia, 'Times New Roman', serif" font-size="17" letter-spacing="-0.5">ET</text>
 </svg>

@@ -3,7 +3,7 @@
 #
 # On every push that touches the resume source, it compiles the PDF and commits
 # it to this site repo as public/cv.pdf. That commit triggers a normal
-# Cloudflare Pages deploy, so the site build itself never needs TeX.
+# Workers Builds deploy, so the site build itself never needs TeX.
 #
 # The resume repo being private is fine: its own checkout uses the built-in
 # GITHUB_TOKEN, and the only cross-repo access is the write to the site repo.

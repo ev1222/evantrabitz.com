@@ -1,6 +1,6 @@
 # evantrabitz.com
 
-Source for [evantrabitz.com](https://evantrabitz.com). Built with Astro and deployed to Cloudflare Pages on every push to `main`.
+Source for [evantrabitz.com](https://evantrabitz.com). Built with Astro and deployed as a static-assets Cloudflare Worker (`wrangler.jsonc`) by Workers Builds on every push to `main`.
 
 ```sh
 npm install

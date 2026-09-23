@@ -7,8 +7,9 @@ Personal website of Evan Trabitz: a short bio, an index of writing (Essays and S
 
 **Stack and hosting**
 - Astro 7, started from the official blog template (`npm create astro@latest -- --template blog`), fully static output. No adapter.
-- Hosted on **Cloudflare Pages**, deployed from GitHub on every push to `main`. Build command `npm run build`, output `dist`, Node version from `.node-version` (22).
-- Domain registered at Cloudflare Registrar; DNS lives in the same Cloudflare account, so the custom domain is attached from the Pages project.
+- Hosted on **Cloudflare Workers with static assets** (Pages is legacy; don't reintroduce it). There is no Worker script: `wrangler.jsonc` just serves `./dist`, with `404-page` not-found handling and the default `auto-trailing-slash`. Deployed by **Workers Builds** from GitHub on every push to `main`: build `npm run build`, deploy `npx wrangler deploy`, Node version from `.node-version` (22). The Worker is named `evantrabitz`, and `name` in `wrangler.jsonc` must match it.
+- Domain registered at Cloudflare Registrar; DNS lives in the same Cloudflare account. The apex custom domain is declared in `wrangler.jsonc` (`routes` → `custom_domain`), and `www` → apex is a zone Redirect Rule.
+- Redirects and headers, if ever needed, go in `public/_redirects` / `public/_headers` (natively supported by Workers static assets).
 - Repo and directory are both named after the domain: `evantrabitz.com`.
 
 **Design**
@@ -27,15 +28,15 @@ Personal website of Evan Trabitz: a short bio, an index of writing (Essays and S
 
 **Features**
 - RSS at `/rss.xml` (`@astrojs/rss`); sitemap via `@astrojs/sitemap`; canonical URLs and OpenGraph tags in `src/components/BaseHead.astro`. `site` is `https://evantrabitz.com` with `trailingSlash: 'always'`.
-- **CV**: the resume is maintained in LaTeX in the separate **private** repo `ev1222/resume`. That repo's GitHub Action (template: `docs/resume-repo-workflow.yml`) compiles it and commits the PDF here as `public/cv.pdf`. It authenticates as a GitHub App installed only on this repo (short-lived tokens, no PAT), and commits through the GraphQL API so the commits are signed and "Verified". The commit triggers a normal Pages deploy, so this repo has no TeX toolchain and no HTML CV page. Never hand-edit `public/cv.pdf`; change the LaTeX instead. Don't add anything that reads from `ev1222/resume` at build time; the one-way push keeps the Pages build free of credentials. The homepage "CV" link appears only once `public/cv.pdf` exists.
+- **CV**: the resume is maintained in LaTeX in the separate **private** repo `ev1222/resume`. That repo's GitHub Action (template: `docs/resume-repo-workflow.yml`) compiles it and commits the PDF here as `public/cv.pdf`. It authenticates as a GitHub App installed only on this repo (short-lived tokens, no PAT), and commits through the GraphQL API so the commits are signed and "Verified". The commit triggers a normal Workers Builds deploy, so this repo has no TeX toolchain and no HTML CV page. Never hand-edit `public/cv.pdf`; change the LaTeX instead. Don't add anything that reads from `ev1222/resume` at build time; the one-way push keeps the Cloudflare build free of credentials. The homepage "CV" link appears only once `public/cv.pdf` exists.
 - Contact: GitHub `github.com/ev1222`, plus LinkedIn, email, and location. All are set in `CONTACT` in `src/consts.ts`; empty values aren't rendered.
 - **Comments**: Giscus (GitHub Discussions), `src/components/Giscus.astro`. It stays hidden until all of `GISCUS` in `src/consts.ts` is filled in. Per-post opt-out: `comments: false`.
-- **Analytics**: Cloudflare Web Analytics. Either enable it in the Pages dashboard (auto-injected) or set `CF_ANALYTICS_TOKEN` in `src/consts.ts`; the beacon is only emitted in production builds. Don't do both.
+- **Analytics**: Cloudflare Web Analytics. Either enable automatic setup for the `evantrabitz.com` zone under Analytics → Web Analytics (auto-injected) or set `CF_ANALYTICS_TOKEN` in `src/consts.ts`; the beacon is only emitted in production builds. Don't do both.
 
 ## POSSE workflow (Publish on Own Site, Syndicate Elsewhere)
 
 1. Write the post in `src/content/writing/` with `draft: true`, and preview with `astro dev`.
-2. Set the final `pubDate`, flip to `draft: false`, and push to `main`. Cloudflare Pages deploys it. **The site is always the original.**
+2. Set the final `pubDate`, flip to `draft: false`, and push to `main`. Workers Builds deploys it. **The site is always the original.**
 3. Wait **24–48 hours**, then copy the post **manually** to Substack. At the top or bottom of the Substack version, add a line linking back to the original, e.g. *"Originally published at [evantrabitz.com](https://evantrabitz.com/writing/<slug>/)."* Where Substack allows it, set the canonical URL to the site.
 4. Add `substackUrl: <substack post url>` to the post's frontmatter and push, so the site links to the copy.
 
@@ -54,6 +55,7 @@ astro dev --background
 Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
 
 - `npm run build`: static build into `dist/`.
+- `npx wrangler dev`: serve `dist/` locally with the same static-asset routing as production (run a build first).
 
 ## Documentation
 

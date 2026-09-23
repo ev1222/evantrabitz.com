@@ -1,0 +1,15 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	// Must match the Worker name in the Cloudflare dashboard (Workers Builds checks this).
+	"name": "evantrabitz",
+	"compatibility_date": "2026-09-22",
+	// Static assets only: no `main`, no Worker script, no Astro adapter.
+	"assets": {
+		"directory": "./dist",
+		// Serve dist/404.html with a 404 status for unmatched paths.
+		"not_found_handling": "404-page",
+		// Default; matches Astro's trailingSlash: 'always' (dir/index.html is served at dir/).
+		"html_handling": "auto-trailing-slash"
+	},
+	"routes": [{ "pattern": "evantrabitz.com", "custom_domain": true }]
+}

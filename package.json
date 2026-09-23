@@ -24,6 +24,10 @@
     "sharp": "^0.35.0"
   },
   "allowScripts": {
-    "esbuild": true
+    "esbuild": true,
+    "workerd@1.20260921.1": true
+  },
+  "devDependencies": {
+    "wrangler": "^4.136.3"
   }
 }

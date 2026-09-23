@@ -20,6 +20,6 @@ export const GISCUS = {
 	categoryId: '',
 };
 
-// Cloudflare Web Analytics beacon token. Leave empty if analytics is enabled
-// from the Cloudflare Pages dashboard instead (it injects the beacon itself).
+// Cloudflare Web Analytics beacon token. Leave empty if automatic setup is enabled
+// for the zone in the Cloudflare dashboard instead (it injects the beacon itself).
 export const CF_ANALYTICS_TOKEN = '';

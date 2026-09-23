@@ -1,0 +1,33 @@
+---
+title: 'An example essay'
+description: 'A kitchen-sink post that exercises footnotes, math and code. Delete it once real posts exist.'
+pubDate: 2026-09-22
+kind: essay
+draft: true
+# substackUrl: https://evantrabitz.substack.com/p/an-example-essay
+---
+
+This is a draft, so it shows up in `astro dev` but never in a production build. It exists to check
+typography: paragraphs, footnotes,[^1] inline math like $e^{i\pi} + 1 = 0$, and display math:
+
+$$
+\mathbb{E}[X] = \sum_{i=1}^{n} x_i \, p(x_i)
+$$
+
+## A section heading
+
+> A block quote, for when someone else said it better.
+
+Code is highlighted by Shiki at build time, with no client-side JavaScript:
+
+```python
+def mean(xs: list[float]) -> float:
+    return sum(xs) / len(xs)
+```
+
+A second footnote, to check numbering and back-links.[^long]
+
+[^1]: A short note.
+
+[^long]: A longer note that runs on for a while, to see how multi-line footnotes wrap in the
+    narrow column and whether the back-reference arrow lands in a sensible place.

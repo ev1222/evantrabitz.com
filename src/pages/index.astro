@@ -1,0 +1,57 @@
+---
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+import FormattedDate from '../components/FormattedDate.astro';
+import { AUTHOR, CONTACT, SITE_DESCRIPTION } from '../consts';
+import Base from '../layouts/Base.astro';
+import { getPosts, postUrl } from '../lib/posts';
+
+const posts = await getPosts();
+const sections = [
+	{ heading: 'Essays', posts: posts.filter((p) => p.data.kind === 'essay') },
+	{ heading: 'Short posts', posts: posts.filter((p) => p.data.kind === 'short') },
+].filter((s) => s.posts.length > 0);
+
+// public/cv.pdf is committed by the resume repo's GitHub Action (see docs/resume-repo-workflow.yml).
+const hasCv = existsSync(join(process.cwd(), 'public', 'cv.pdf'));
+
+const links = [
+	CONTACT.email && { label: 'Email', href: `mailto:${CONTACT.email}` },
+	CONTACT.github && { label: 'GitHub', href: CONTACT.github },
+	CONTACT.linkedin && { label: 'LinkedIn', href: CONTACT.linkedin },
+	hasCv && { label: 'CV', href: '/cv.pdf' },
+	{ label: 'RSS', href: '/rss.xml' },
+].filter((l): l is { label: string; href: string } => Boolean(l));
+---
+
+<Base description={SITE_DESCRIPTION} bare>
+	<h1 class="name">{AUTHOR}</h1>
+
+	<section class="bio">
+		<!-- TODO: replace with a real two- or three-sentence bio. -->
+		<p>
+			I write here about the things I'm working on and thinking about. Longer pieces are essays;
+			everything else is a short post.
+		</p>
+		<p class="links">
+			{CONTACT.location && <span>{CONTACT.location}</span>}
+			{links.map((l) => <a href={l.href}>{l.label}</a>)}
+		</p>
+	</section>
+
+	{
+		sections.map((s) => (
+			<section class="index">
+				<h2>{s.heading}</h2>
+				<ul>
+					{s.posts.map((p) => (
+						<li>
+							<a href={postUrl(p.id)}>{p.data.title}</a>
+							<FormattedDate date={p.data.pubDate} />
+						</li>
+					))}
+				</ul>
+			</section>
+		))
+	}
+</Base>

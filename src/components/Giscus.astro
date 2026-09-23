@@ -1,0 +1,30 @@
+---
+import { GISCUS } from '../consts';
+
+const configured = GISCUS.repo && GISCUS.repoId && GISCUS.category && GISCUS.categoryId;
+---
+
+{
+	configured && (
+		<section class="comments">
+			<script
+				is:inline
+				src="https://giscus.app/client.js"
+				data-repo={GISCUS.repo}
+				data-repo-id={GISCUS.repoId}
+				data-category={GISCUS.category}
+				data-category-id={GISCUS.categoryId}
+				data-mapping="pathname"
+				data-strict="1"
+				data-reactions-enabled="0"
+				data-emit-metadata="0"
+				data-input-position="top"
+				data-theme="preferred_color_scheme"
+				data-lang="en"
+				data-loading="lazy"
+				crossorigin="anonymous"
+				async
+			/>
+		</section>
+	)
+}

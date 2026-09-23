@@ -1,0 +1,41 @@
+---
+import BaseHead, { type Props as HeadProps } from '../components/BaseHead.astro';
+import { AUTHOR, CF_ANALYTICS_TOKEN } from '../consts';
+
+type Props = HeadProps & {
+	/** Hide the name link at the top (the homepage already leads with it). */
+	bare?: boolean;
+};
+
+const { bare = false, ...head } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead {...head} />
+		<slot name="head" />
+	</head>
+	<body>
+		{
+			!bare && (
+				<header class="site-header">
+					<a href="/">{AUTHOR}</a>
+				</header>
+			)
+		}
+		<main>
+			<slot />
+		</main>
+		{
+			import.meta.env.PROD && CF_ANALYTICS_TOKEN && (
+				<script
+					is:inline
+					defer
+					src="https://static.cloudflareinsights.com/beacon.min.js"
+					data-cf-beacon={JSON.stringify({ token: CF_ANALYTICS_TOKEN })}
+				/>
+			)
+		}
+	</body>
+</html>

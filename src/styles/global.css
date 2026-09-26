@@ -14,7 +14,7 @@
 	--accent: light-dark(#7b2d5e, #cf8db8);
 	--accent-text: light-dark(#7b2d5e, #cf8db8);
 	--code-bg: light-dark(#e1e6e3, #19211e);
-	--measure: 36rem;
+	--measure: 40rem;
 }
 :root[data-theme='light'] {
 	color-scheme: light;

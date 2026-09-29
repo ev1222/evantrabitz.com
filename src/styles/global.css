@@ -99,6 +99,11 @@ table,
 figure {
 	margin: 0 0 1.2em;
 }
+/* A nested list sits inside its parent item; don't add a paragraph gap after it. */
+li > ul,
+li > ol {
+	margin-bottom: 0;
+}
 
 a {
 	color: inherit;

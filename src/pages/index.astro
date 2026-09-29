@@ -16,6 +16,7 @@ const sections = [
 const hasResume = existsSync(join(process.cwd(), 'public', 'resume.pdf'));
 
 const links = [
+	{ label: 'About', href: '/about/' },
 	CONTACT.email && { label: 'Email', href: `mailto:${CONTACT.email}` },
 	CONTACT.github && { label: 'GitHub', href: CONTACT.github },
 	CONTACT.linkedin && { label: 'LinkedIn', href: CONTACT.linkedin },

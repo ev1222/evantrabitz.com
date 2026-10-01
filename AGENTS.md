@@ -18,7 +18,7 @@ Only record something here if Evan actually decided it. Claude's own choices go 
 - Minimal and text-first, modeled on darioamodei.com: one serif typeface, a narrow reading column, generous line height, almost no chrome.
 - **Strip template features rather than adding them.**
 - The homepage is a short bio plus an index of writing split into **Essays** and **Notes**.
-- Palette: **Eucalyptus & Plum** (chosen from a set of alternatives to the original green/white/pink). Values are under Implementation notes.
+- Palette: **Eucalyptus & Plum** (chosen from a set of alternatives to the original green/white/pink). Values are tokens in `src/styles/global.css`.
 - A **light/dark toggle in the top-right corner**.
 - Favicon reads "ET".
 
@@ -42,12 +42,11 @@ Only record something here if Evan actually decided it. Claude's own choices go 
 - The apex custom domain is declared in `wrangler.jsonc` (`routes` → `custom_domain`); `www` → apex is a zone Redirect Rule. Redirects and headers go in `public/_redirects` / `public/_headers`.
 
 **Design**
-- Typeface: Source Serif 4, self-hosted via `@fontsource/source-serif-4` and the Astro Fonts API. Column `--measure: 36rem`, line height 1.7. All styling is in `src/styles/global.css`.
-- Colors are tokens at the top of `global.css`, each written as `light-dark(light, dark)`. Light: eucalyptus `#EDF0EE` background, `#1A2320` text, `#53605A` secondary, plum `#7B2D5E` accent. Dark: `#121816` background, `#D5DCD8` text, `#8C9893` secondary, orchid `#CF8DB8` accent. The accent passes as text in both modes, so `--accent` and `--accent-text` currently match. Favicon: light "ET" (`#EDF0EE`) on the dark background (`#121816`) with a hairline `#8C9893` border, the same in both modes.
+- Colors are tokens at the top of `src/styles/global.css`, each written as `light-dark(light, dark)`. The accent passes as text in both modes, so `--accent` and `--accent-text` currently match. The favicon is the same in both modes.
 - Theme toggle: `src/components/ThemeToggle.astro`. It follows the OS until clicked. A click sets `<html data-theme>` (which switches `color-scheme`) and stores the choice in `localStorage`, and an inline script in `Base.astro`'s `<head>` applies it before first paint. Shiki uses `defaultColor: false`, so code blocks follow the toggle; Giscus is kept in sync by `postMessage`. The favicon's own dark variant follows the OS, not the toggle.
 
 **Content**
-- Posts live in the `writing` collection: `src/content/writing/<slug>.md(x)` → `/writing/<slug>/`. Frontmatter (schema in `src/content.config.ts`): `title`, `description`, `pubDate`, optional `updatedDate`, `kind` (`essay` | `note`, default `note`), `draft` (default `false`), optional `substackUrl`, `comments` (default `true`).
+- Posts live in the `writing` collection: `src/content/writing/<slug>.md(x)` → `/writing/<slug>/`. Schema in `src/content.config.ts`.
 - `draft: true` excludes a post from production builds (pages, homepage index, RSS and sitemap), but drafts still render under `astro dev`. Always go through `getPosts()` in `src/lib/posts.ts`; never call `getCollection('writing')` directly, or drafts will leak.
 - Math plugins run through the `unified()` Markdown processor (`@astrojs/markdown-remark`). Astro 7 defaults to Sätteri, which doesn't run remark/rehype plugins, so don't remove `markdown.processor` from `astro.config.mjs`. KaTeX CSS is imported only on post pages. Sidenotes are not implemented.
 - Astro's content cache keys entries by file contents, so after a schema change that alters a default, touch the affected posts (or delete `.astro/data-store.json` with the dev server stopped).
@@ -80,7 +79,6 @@ astro dev --background
 
 Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
 
-- `npm run build`: static build into `dist/`.
 - `npx wrangler dev`: serve `dist/` locally with the same static-asset routing as production (run a build first).
 
 ## Documentation

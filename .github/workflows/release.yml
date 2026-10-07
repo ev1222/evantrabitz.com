@@ -1,0 +1,23 @@
+name: Release
+
+# Production deploys happen only on version tags (e.g. v1.0.0); pushes to main don't deploy.
+# This moves the `production` branch to the tagged commit, and Workers Builds (whose
+# production branch is `production`) builds and deploys it.
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # --force so the latest tag always wins, even if it points at an older commit (a rollback).
+      - run: git push --force origin HEAD:refs/heads/production

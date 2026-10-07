@@ -10,7 +10,7 @@ Only record something here if Evan actually decided it. Claude's own choices go 
 
 **Stack and hosting**
 - Astro, started from the official blog template (`npm create astro@latest -- --template blog`).
-- Hosted on **Cloudflare Workers** (static assets), deployed from GitHub on every push to `main`. Pages is legacy; don't use it.
+- Hosted on **Cloudflare Workers** (static assets), deployed only when a version tag (e.g. `v1.0.0`) is pushed; `main` is the dev branch and pushing to it doesn't deploy. Pages is legacy; don't use it.
 - Domain registered at Cloudflare Registrar, with DNS in the same Cloudflare account.
 - Repo and directory are both named after the domain: `evantrabitz.com`. The GitHub repo is public.
 
@@ -38,7 +38,7 @@ Only record something here if Evan actually decided it. Claude's own choices go 
 ## Implementation notes (Claude's choices; change freely)
 
 **Build and hosting**
-- Fully static output; no Astro adapter. `wrangler.jsonc` serves `./dist` with no Worker script, `404-page` not-found handling and the default `auto-trailing-slash`. Workers Builds runs `npm run build`, then `npx wrangler deploy`; Node version comes from `.node-version` (22). The Worker is named `evantrabitz`, and `name` in `wrangler.jsonc` must match it.
+- Fully static output; no Astro adapter. `wrangler.jsonc` serves `./dist` with no Worker script, `404-page` not-found handling and the default `auto-trailing-slash`. Workers Builds' production branch is `production`, which nobody pushes to by hand: `.github/workflows/release.yml` runs on `v*.*.*` tags and force-pushes the tagged commit to `production` (with `GITHUB_TOKEN`; no Cloudflare secrets in GitHub). Workers Builds then runs `npm run build`, then `npx wrangler deploy`; Node version comes from `.node-version` (22). Non-production branch builds are off, so `main` doesn't deploy. To roll back, tag an older commit with a new version. Since resume bot commits land on `main`, a new resume goes live with the next tag. The Worker is named `evantrabitz`, and `name` in `wrangler.jsonc` must match it.
 - The apex custom domain is declared in `wrangler.jsonc` (`routes` → `custom_domain`); `www` → apex is a zone Redirect Rule. Redirects and headers go in `public/_redirects` / `public/_headers`.
 
 **Design**
@@ -61,7 +61,7 @@ Only record something here if Evan actually decided it. Claude's own choices go 
 ## POSSE workflow (Publish on Own Site, Syndicate Elsewhere)
 
 1. Write the post in `src/content/writing/` with `draft: true`, and preview with `astro dev`.
-2. Set the final `pubDate`, flip to `draft: false`, and push to `main`. Workers Builds deploys it. **The site is always the original.**
+2. Set the final `pubDate`, flip to `draft: false`, push to `main`, then tag and push a release (`git tag v1.2.3 && git push origin v1.2.3`) to deploy it. **The site is always the original.**
 3. Wait **24–48 hours**, then copy the post **manually** to Substack. At the top or bottom of the Substack version, add a line linking back to the original, e.g. *"Originally published at [evantrabitz.com](https://evantrabitz.com/writing/<slug>/)."* Where Substack allows it, set the canonical URL to the site.
 4. Add `substackUrl: <substack post url>` to the post's frontmatter and push, so the site links to the copy.
 

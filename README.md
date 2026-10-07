@@ -1,6 +1,6 @@
 # evantrabitz.com
 
-Source for [evantrabitz.com](https://evantrabitz.com). Built with Astro and deployed as a static-assets Cloudflare Worker (`wrangler.jsonc`) by Workers Builds on every push to `main`.
+Source for [evantrabitz.com](https://evantrabitz.com). Built with Astro and deployed as a static-assets Cloudflare Worker (`wrangler.jsonc`) by Workers Builds from the `production` branch, which a GitHub Action moves to each pushed version tag (`v*.*.*`).
 
 ```sh
 npm install

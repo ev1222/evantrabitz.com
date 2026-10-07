@@ -1,8 +1,36 @@
 ---
 import Base from '../layouts/Base.astro';
 
-// Personal projects, in display order. `href` can be a repo, a live site, or a post.
-const projects: { name: string; href: string; description: string }[] = [];
+// Personal projects, newest first. `href` (a repo, live site, or post) is optional.
+const projects: { name: string; href?: string; year: string; description: string }[] = [
+	{
+		name: 'Personal Budgeting App',
+		href: 'https://github.com/ev1222/budgeting-app',
+		year: 'In progress',
+		description:
+			'An app for tracking my spending over time and doing data science with it. It syncs expenses from Google Sheets into a local SQLite database, serves them through a GraphQL API, and visualizes them with Streamlit.',
+	},
+	{
+		name: 'Great Ape Frame Selection with Gaussian Mixtures',
+		href: 'https://github.com/ev1222/monkey',
+		year: '2023',
+		description:
+			'Used a Gaussian mixture model in MATLAB to automatically capture high-quality frames for AI classification.',
+	},
+	{
+		name: 'Physics Engine',
+		href: 'https://devpost.com/software/python-physics-engine',
+		year: '2022',
+		description: 'Developed in 36 hours a physics engine in Python to display on a 16x16 LED board.',
+	},
+	{
+		name: 'Philosopher Conversations with LSTMs',
+		href: 'https://betterprogramming.pub/creating-philosopher-conversations-using-a-generative-lstm-network-fd22a14e3318',
+		year: '2022',
+		description:
+			"Generated philosopher conversations by training 40 LSTM networks on philosophers' corpora totaling over 300,000 sentences.",
+	},
+];
 ---
 
 <Base title="Projects" description="Personal projects by Evan Trabitz.">
@@ -12,7 +40,10 @@ const projects: { name: string; href: string; description: string }[] = [];
 			<ul class="projects">
 				{projects.map((p) => (
 					<li>
-						<a href={p.href}>{p.name}</a>
+						<div class="head">
+							{p.href ? <a href={p.href}>{p.name}</a> : <span>{p.name}</span>}
+							<span class="year">{p.year}</span>
+						</div>
 						<p>{p.description}</p>
 					</li>
 				))}
@@ -29,10 +60,20 @@ const projects: { name: string; href: string; description: string }[] = [];
 		padding: 0;
 	}
 	.projects li {
-		margin-bottom: 1.1em;
+		margin-bottom: 1.6em;
+	}
+	.head {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 1rem;
+	}
+	.year {
+		flex-shrink: 0;
+		color: var(--muted);
+		font-size: 0.85rem;
 	}
 	.projects p {
-		margin: 0.15em 0 0;
-		color: var(--muted);
+		margin: 0.3em 0 0;
 	}
 </style>

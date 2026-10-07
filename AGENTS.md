@@ -56,7 +56,7 @@ Only record something here if Evan actually decided it. Claude's own choices go 
 **Features**
 - `site` is `https://evantrabitz.com` with `trailingSlash: 'always'`; head tags are in `src/components/BaseHead.astro`.
 - Resume: bot commits are signed and titled "Update resume (resume@<sha>)". Never hand-edit `public/resume.pdf`; change the LaTeX instead. Nothing reads from the private repo at build time. The homepage link appears only once `public/resume.pdf` exists. `/cv.pdf` 301s to `/resume.pdf` via `public/_redirects`.
-- Projects are a plain array at the top of `src/pages/projects.astro` (`name`, `href`, `description`); it shows "Nothing here yet." while empty. The RSS feed stays discoverable through the `<link rel="alternate">` in `BaseHead.astro`.
+- Projects are a plain array at the top of `src/pages/projects.astro` (`name`, optional `href`, `year`, `description`), newest first; it shows "Nothing here yet." while empty. The RSS feed stays discoverable through the `<link rel="alternate">` in `BaseHead.astro`.
 - Contact values live in `CONTACT` in `src/consts.ts`; empty values aren't rendered. `hello@evantrabitz.com` needs Cloudflare Email Routing (Compute → Email Service) to receive mail.
 - Giscus (`src/components/Giscus.astro`) stays hidden until all of `GISCUS` in `src/consts.ts` is filled in. Per-post opt-out: `comments: false`.
 - Web Analytics uses automatic setup on the zone; leave `CF_ANALYTICS_TOKEN` empty unless switching to the manual snippet (never both).

@@ -1,0 +1,38 @@
+---
+import Base from '../layouts/Base.astro';
+
+// Personal projects, in display order. `href` can be a repo, a live site, or a post.
+const projects: { name: string; href: string; description: string }[] = [];
+---
+
+<Base title="Projects" description="Personal projects by Evan Trabitz.">
+	<h1>Projects</h1>
+	{
+		projects.length > 0 ? (
+			<ul class="projects">
+				{projects.map((p) => (
+					<li>
+						<a href={p.href}>{p.name}</a>
+						<p>{p.description}</p>
+					</li>
+				))}
+			</ul>
+		) : (
+			<p>Nothing here yet.</p>
+		)
+	}
+</Base>
+
+<style>
+	.projects {
+		list-style: none;
+		padding: 0;
+	}
+	.projects li {
+		margin-bottom: 1.1em;
+	}
+	.projects p {
+		margin: 0.15em 0 0;
+		color: var(--muted);
+	}
+</style>

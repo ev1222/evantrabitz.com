@@ -16,11 +16,11 @@ const sections = [
 const hasResume = existsSync(join(process.cwd(), 'public', 'resume.pdf'));
 
 const links = [
-	CONTACT.email && { label: 'Email', href: `mailto:${CONTACT.email}` },
+	{ label: 'Projects', href: '/projects/' },
 	CONTACT.github && { label: 'GitHub', href: CONTACT.github },
+	CONTACT.email && { label: 'Email', href: `mailto:${CONTACT.email}` },
 	CONTACT.linkedin && { label: 'LinkedIn', href: CONTACT.linkedin },
 	hasResume && { label: 'Resume', href: '/resume.pdf' },
-	{ label: 'RSS', href: '/rss.xml' },
 ].filter((l): l is { label: string; href: string } => Boolean(l));
 ---
 

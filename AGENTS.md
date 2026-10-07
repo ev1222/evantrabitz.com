@@ -32,6 +32,8 @@ Only record something here if Evan actually decided it. Claude's own choices go 
 - RSS via `@astrojs/rss`; sitemap; canonical URLs and OpenGraph tags.
 - **Resume**: maintained in LaTeX in a separate **private** repo. A GitHub Action there (authenticating as a GitHub App, not a PAT) compiles it and commits the PDF here as `public/resume.pdf`. The workflow and its setup must **not** live in this public repo. The homepage link is labelled "Resume".
 - About/contact info: GitHub (`github.com/ev1222`), LinkedIn, email, location.
+- Homepage links, in order: **Projects, GitHub, Email, LinkedIn, Resume**. No RSS link (the feed itself stays).
+- A **Projects** page for personal projects.
 - Comments via Giscus (GitHub Discussions).
 - Cloudflare Web Analytics.
 
@@ -54,6 +56,7 @@ Only record something here if Evan actually decided it. Claude's own choices go 
 **Features**
 - `site` is `https://evantrabitz.com` with `trailingSlash: 'always'`; head tags are in `src/components/BaseHead.astro`.
 - Resume: bot commits are signed and titled "Update resume (resume@<sha>)". Never hand-edit `public/resume.pdf`; change the LaTeX instead. Nothing reads from the private repo at build time. The homepage link appears only once `public/resume.pdf` exists. `/cv.pdf` 301s to `/resume.pdf` via `public/_redirects`.
+- Projects are a plain array at the top of `src/pages/projects.astro` (`name`, `href`, `description`); it shows "Nothing here yet." while empty. The RSS feed stays discoverable through the `<link rel="alternate">` in `BaseHead.astro`.
 - Contact values live in `CONTACT` in `src/consts.ts`; empty values aren't rendered. `hello@evantrabitz.com` needs Cloudflare Email Routing (Compute → Email Service) to receive mail.
 - Giscus (`src/components/Giscus.astro`) stays hidden until all of `GISCUS` in `src/consts.ts` is filled in. Per-post opt-out: `comments: false`.
 - Web Analytics uses automatic setup on the zone; leave `CF_ANALYTICS_TOKEN` empty unless switching to the manual snippet (never both).

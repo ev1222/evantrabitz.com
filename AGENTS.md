@@ -18,6 +18,7 @@ Only record something here if Evan actually decided it. Claude's own choices go 
 - Minimal and text-first, modeled on darioamodei.com: one serif typeface, a narrow reading column, generous line height, almost no chrome.
 - **Strip template features rather than adding them.**
 - The homepage is a short bio plus an index of writing split into **Essays** and **Notes**.
+- An **About** page at `/about/` holds the longer personal history and work-history narrative. It's a fixed page updated in place, not a post (no date, not in the index or RSS, no comments). Reflective, dated pieces go in `writing` and can be linked from it.
 - Palette: **Eucalyptus & Plum** (chosen from a set of alternatives to the original green/white/pink). Values are tokens in `src/styles/global.css`.
 - A **light/dark toggle in the top-right corner**.
 - Favicon reads "ET".
@@ -51,6 +52,7 @@ Only record something here if Evan actually decided it. Claude's own choices go 
 - Posts live in the `writing` collection: `src/content/writing/<slug>.md(x)` → `/writing/<slug>/`. Schema in `src/content.config.ts`.
 - `draft: true` excludes a post from production builds (pages, homepage index, RSS and sitemap), but drafts still render under `astro dev`. Always go through `getPosts()` in `src/lib/posts.ts`; never call `getCollection('writing')` directly, or drafts will leak.
 - Math plugins run through the `unified()` Markdown processor (`@astrojs/markdown-remark`). Astro 7 defaults to Sätteri, which doesn't run remark/rehype plugins, so don't remove `markdown.processor` from `astro.config.mjs`. KaTeX CSS is imported only on post pages. Sidenotes are not implemented.
+- The About page is plain Markdown, `src/pages/about.md`, rendered through `src/layouts/Page.astro` (same heading and `.prose` styling as posts). The homepage links to it first in its links row.
 - Astro's content cache keys entries by file contents, so after a schema change that alters a default, touch the affected posts (or delete `.astro/data-store.json` with the dev server stopped).
 
 **Features**
